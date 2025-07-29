@@ -54,7 +54,7 @@ module.exports.updateUser = async (req, res) => {
     } else {
       return res
         .status(200)
-        .json({ messaage: "Impossible de modifier ce champ" });
+        .json({ message: "Impossible de modifier ce champ" });
     }
     // ensuite on fait appelle au userModel.updateUser
     // à qui on passe en parametre l'id et les tableaux

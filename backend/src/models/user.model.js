@@ -60,7 +60,7 @@ module.exports.followers = async (FollowersList, id) => {
   await db.promise().query(sql, [JSON.stringify(FollowersList), id]);
 };
 
-// Module permettant de retrouver qui se se login dans la bd
+// Module permettant de retrouver, dans la bd, l'utilisateur qui se log
 module.exports.login = async (email) => {
   const [user] = await db
     .promise()

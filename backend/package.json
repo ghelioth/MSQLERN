@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest --watchAll",
     "start": "nodemon ./src/server",
     "msqlern": "node ./config/sql"
   },
@@ -24,5 +24,9 @@
     "mysql2": "^3.14.1",
     "nodemon": "^3.1.10",
     "validator": "^13.15.15"
+  },
+  "devDependencies": {
+    "jest": "^30.0.5",
+    "supertest": "^7.1.4"
   }
 }

@@ -47,3 +47,5 @@ app.use("/api/comment", commentRoutes);
 app.listen(process.env.PORT, () => {
   console.log("Listening on port " + process.env.PORT);
 });
+
+module.exports = app;
