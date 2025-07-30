@@ -24,7 +24,7 @@ module.exports.getAllUsers = async (req, res) => {
 // controller renvoyant les informations d'un utilisateur
 module.exports.userInfo = async (req, res) => {
   try {
-    const [user] = await userModel.getUserById(req.params.id);
+    const user = await userModel.getUserById(req.params.id);
 
     res.status(200).json({
       message: "Voici l'utilisateur demandé",
