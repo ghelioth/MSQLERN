@@ -11,6 +11,8 @@ module.exports.signUp = async (req, res) => {
     const { pseudo, email, password } = req.body;
     // on supprime les espaces contenus dans le pseudo avec la fonction trim()
     const trimPseudo = await trim(pseudo);
+    // if (!trimPseudo)
+    //   return res.status(400).json({ message: "Pseudo invalide" });
     if (trimPseudo.error)
       return res.status(400).json({ message: trimPseudo.error });
 
@@ -21,6 +23,7 @@ module.exports.signUp = async (req, res) => {
 
     // on hash le mot de passe afin de le sécuriser avant de le stocker dans la bd
     const hashPassword = await crypt(password);
+    console.log(await crypt(password));
     if (hashPassword.error)
       return res.status(400).json({ message: hashPassword.error });
 

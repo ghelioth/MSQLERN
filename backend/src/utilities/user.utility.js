@@ -17,7 +17,7 @@ module.exports.trim = async (pseudo) => {
     return { error: "pseudo trop long : Maximum 55 caractères" };
   }
 
-  return trimPseudo;
+  return { value: trimPseudo };
 };
 
 module.exports.isEmail = async (email) => {
@@ -32,8 +32,10 @@ module.exports.crypt = async (password) => {
   if (password.length <= 5) {
     return { error: "mot de passe trop court, minimum 6 caractères" };
   } else {
+    console.log("je passe par là");
     const salt = await bcrypt.genSalt();
     const hashPassword = await bcrypt.hash(password, salt);
+    console.log("hash : ", hashPassword);
     return hashPassword;
   }
 };
@@ -109,7 +111,7 @@ module.exports.deleteOneFollowing = async (id, idToUnFollow) => {
   //     }
   //   }
   // }
-  // version corrigée avec chatgpt plus optimisée
+  // version corrigée plus optimisée
   const FollowingList = tempList.filter((item) => item != idToUnFollow);
   return FollowingList;
 };
@@ -138,7 +140,7 @@ module.exports.deleteOneFollower = async (idToUnFollow, id) => {
   //       FollowersList.push(tempList[i]);
   //     }
   //   }
-  // version corrigée avec chatgpt plus optimisée
+  // version corrigée plus optimisée
   const FollowersList = tempList.filter((item) => item != id);
   return FollowersList;
 };
