@@ -9,15 +9,15 @@ module.exports.trim = async (pseudo) => {
 
   const trimPseudo = pseudo.trim();
 
-  if (trimPseudo.length < 4) {
-    return { error: "pseudo trop court : Minimum 4 caractères" };
+  if (trimPseudo.length <= 4) {
+    return { error: "pseudo trop court : Minimum 5 caractères" };
   }
 
   if (trimPseudo.length > 55) {
     return { error: "pseudo trop long : Maximum 55 caractères" };
   }
 
-  return { value: trimPseudo };
+  return trimPseudo;
 };
 
 module.exports.isEmail = async (email) => {
@@ -32,10 +32,8 @@ module.exports.crypt = async (password) => {
   if (password.length <= 5) {
     return { error: "mot de passe trop court, minimum 6 caractères" };
   } else {
-    console.log("je passe par là");
     const salt = await bcrypt.genSalt();
     const hashPassword = await bcrypt.hash(password, salt);
-    console.log("hash : ", hashPassword);
     return hashPassword;
   }
 };

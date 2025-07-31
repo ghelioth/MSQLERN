@@ -5,9 +5,11 @@ const { createToken } = require("../utilities/auth.utility");
 const { signUpErrors } = require("../utilities/error.utility");
 
 module.exports.signUp = async (req, res) => {
-  if (req.body === undefined) {
+  if (!req.body) {
     return res.status(400).json({ message: "Champs requis" });
-  } else {
+  }
+
+  try {
     const { pseudo, email, password } = req.body;
     // on supprime les espaces contenus dans le pseudo avec la fonction trim()
     const trimPseudo = await trim(pseudo);
@@ -23,22 +25,23 @@ module.exports.signUp = async (req, res) => {
 
     // on hash le mot de passe afin de le sécuriser avant de le stocker dans la bd
     const hashPassword = await crypt(password);
-    console.log(await crypt(password));
     if (hashPassword.error)
       return res.status(400).json({ message: hashPassword.error });
 
-    // on crée notre utilisateur par la suite
-    try {
-      const user = await userModel.createUser(
-        trimPseudo,
-        valideEmail,
-        hashPassword
-      );
-      res.status(200).json({ user_id: user.insertId, message: "créé" });
-    } catch (err) {
-      const errors = signUpErrors(err);
-      res.status(400).send({ errors });
+    const user = await userModel.createUser(
+      trimPseudo,
+      valideEmail,
+      hashPassword
+    );
+
+    if (user && user.error) {
+      throw new Error(user.error);
     }
+
+    res.status(200).json({ user_id: user.insertId, message: "créé" });
+  } catch (err) {
+    const errors = signUpErrors(err);
+    return res.status(400).json(errors);
   }
 };
 

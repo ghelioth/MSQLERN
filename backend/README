@@ -1,15 +1,12 @@
 # Comment fonctionne l'application : 
-Avant toutes choses il faut taper la commande : npm install
+Avant toute chose il faut taper la commande : npm install
 pour installer les dépendances du projet
 Ensuite il faut suivre les étapes suivantes :
 ## 1 - créer dans un fichier .env dans le dossier config puis le remplir avec les champs suivant :
-
 # Fichier .env
 # Ce fichier contient les variables d'environnement nécessaires au bon fonctionnement de l'application
-# Il est important de ne pas le partager publiquement car il contient des informations sensibles
-# Il faut le créer dans le dossier config
 PORT = ? port sur lequel vous souhaitez que le serveur écoute
-information de connexion à la base de données
+#information de connexion à la base de données
 DB_HOST_NAME = ? l'adresse sur laquelle on join la bd
 DB_USER_NAME = ? nom d'utilisateur de la bd
 DB_PASSWORD = ? le mot de passe qui sera utiliser
@@ -17,13 +14,16 @@ DB_DATABASE_NAME = ? le nom qui sera attribué à la bd
 USER_ROOT = root
 ROOT_PASSWORD = ? mot de passe root si existant sinon mettre ""
 
-## 2 - Puis exécuter la commande : npm run msqlern
+## 2 - Exécuter la commande : 
+-- npm run msqlern --
 Cette commande exécute le fichier ./config/msqlern.js qui se charge de créer la base de données DB_DATABASE_NAME, l'utilisateur DB_USER_NAME puis cré la table 'users' ainsi que les tables 'posts' et 'comments'.
 Si la base de données existe déjà, la commande ne fera rien.
 
 
-## 3 - Et exécuter la commande : npm start
+## 3 - Exécuter la commande : npm start
 Cette commande exécute le fichier server.js qui lance le serveur.
 Apres toutes ces étapes, le serveur demarre et écoute les requetes sur le port renseigné dans le fichier .env.
+
+
 ## 4 - Pour tester l'application, vous pouvez utiliser Postman ou tout autre outil de test d'API.
 

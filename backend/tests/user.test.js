@@ -1,5 +1,9 @@
 const bcrypt = require("bcrypt");
-const { signUp, signIn } = require("../src/controllers/auth.controller");
+const {
+  signUp,
+  signIn,
+  logout,
+} = require("../src/controllers/auth.controller");
 const userModel = require("../src/models/user.model");
 const request = require("supertest");
 const server = require("../src/server");
@@ -33,7 +37,7 @@ describe("POST /api/user/register", () => {
     };
     jest.clearAllMocks();
   });
-  test("Devrait retourner 400 si req.body vide", async () => {
+  test("Devrait retourner 400 si req.body est vide", async () => {
     req.body = undefined;
     await signUp(req, res);
 
@@ -41,7 +45,7 @@ describe("POST /api/user/register", () => {
     expect(res.json).toHaveBeenCalledWith({ message: "Champs requis" });
   });
 
-  test("Devrait retourner une erreur si pseudo invalide", async () => {
+  test("Devrait retourner une erreur si pseudo trop court", async () => {
     trim.mockResolvedValue({ error: "pseudo trop court" });
 
     await signUp(req, res);
@@ -60,7 +64,7 @@ describe("POST /api/user/register", () => {
     expect(res.json).toHaveBeenCalledWith({ message: "Email invalide" });
   });
 
-  test("Devrait retourner une erreur si mot invalide", async () => {
+  test("Devrait retourner une erreur si mdp invalide", async () => {
     trim.mockResolvedValue("Test");
     isEmail.mockResolvedValue("test@example.com");
     crypt.mockResolvedValue({ error: "Mot de passe trop court" });
@@ -73,15 +77,55 @@ describe("POST /api/user/register", () => {
     });
   });
 
-  // test("Devrait simuler la création d'un utilisateur sans DB", async () => {
-  //   const res = await request(server).post("/api/user/register").send({
-  //     pseudo: "tests",
-  //     email: "test@example.com",
-  //     password: "test@1234",
-  //   });
-  //   expect(res.statusCode).toBe(400);
-  //   expect(res.body.errors.autre).toEqual("Quelque chose s'est mal passé");
-  // });
+  test("Devrait retourner une erreur si le pseudo existe déjà", async () => {
+    trim.mockResolvedValue("tests");
+    isEmail.mockResolvedValue("test@example.com");
+    crypt.mockResolvedValue("hashedPassword");
+    userModel.createUser.mockResolvedValue({
+      error: "Duplicate entry 'tests' for key 'users.pseudo'",
+    });
+
+    await signUp(req, res);
+
+    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.json).toHaveBeenCalledWith({
+      email: "",
+      pseudo: "Pseudo incorrect ou déjà pris",
+    });
+  });
+
+  test("Devrait retourner une erreur si le mail existe déjà", async () => {
+    trim.mockResolvedValue("tests");
+    isEmail.mockResolvedValue("test@example.com");
+    crypt.mockResolvedValue("hashedPassword");
+    userModel.createUser.mockResolvedValue({
+      error: "Duplicate entry 'test@example.com' for key 'users.email'",
+    });
+
+    await signUp(req, res);
+
+    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.json).toHaveBeenCalledWith({
+      email: "Email déjà enrégistré",
+      pseudo: "",
+    });
+  });
+
+  test("Devrait enregistrer un utilisateur avec succès", async () => {
+    trim.mockResolvedValue("Test");
+    isEmail.mockResolvedValue("test@example.com");
+    crypt.mockResolvedValue("hashedPassword");
+    userModel.createUser.mockResolvedValue({
+      id: 1,
+      pseudo: "Test",
+      email: "test@example.com",
+    });
+
+    await signUp(req, res);
+
+    expect(res.status).toHaveBeenCalledWith(200);
+    expect(res.json).toHaveBeenCalledWith({ message: "créé" });
+  });
 });
 
 // test de la route qui permet à un utilisateur de se connecter
@@ -116,7 +160,7 @@ describe("POST /api/user/login", () => {
     expect(res.json).toHaveBeenCalledWith({ error: "Mot de passe incorrect" });
   });
 
-  test("Devrait retourner un si tout est correct", async () => {
+  test("Devrait retourner un cookie si tout est correct", async () => {
     userModel.login.mockResolvedValue([{ id: 1, password: "HashedPassword" }]);
     bcrypt.compare.mockResolvedValue(true);
 
@@ -124,6 +168,25 @@ describe("POST /api/user/login", () => {
 
     expect(res.cookie).toHaveBeenCalled();
     expect(res.json).toHaveBeenCalledWith({ user: 1 });
+  });
+});
+
+// test de la route logout permettant de deconnecter un utilisateur
+describe("GET /api/user/logout", () => {
+  let req, res;
+
+  beforeEach(() => {
+    req = {};
+    res = {
+      redirect: jest.fn(),
+      cookie: jest.fn(),
+    };
+  });
+  test("Devrait deconnecter un utilisateur en supprimant le cookie", async () => {
+    await logout(req, res);
+
+    expect(res.cookie).toHaveBeenCalledWith("jwt", "", { maxAge: 1 });
+    expect(res.redirect).toHaveBeenCalledWith("/");
   });
 });
 
@@ -207,9 +270,9 @@ describe("Test de la route /api/user/follow/:id : PATCH", () => {
   });
 });
 
-// test de la route permettant de follow un utilisateur
+// test de la route permettant de unfollow un utilisateur
 describe("Test de la route /api/user/follow/:id : PATCH", () => {
-  test("Follow un utilisateur", async () => {
+  test("Unfollow un utilisateur", async () => {
     const res = await request(server).patch("/api/user/unfollow/2").send({
       idToFollow: "1",
     });
