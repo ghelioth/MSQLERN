@@ -9,16 +9,20 @@ const request = require("supertest");
 const server = require("../src/server");
 const db = require("../config/db");
 const { trim, isEmail, crypt } = require("../src/utilities/user.utility");
+const fs = require("fs");
+const { uploadProfil } = require("../src/controllers/upload.controller");
 
 afterAll(async () => {
   await db.end();
 });
-// authentification
-// on mock le module pour éviter de vraiment créer un utilisateur
+
+// on mock les modules pour simuler leur exécution
+// Ceci m'évite par exemple de vraiment un user quand je teste la route register
 jest.mock("../src/models/user.model");
 jest.mock("bcrypt");
 jest.mock("../src/utilities/user.utility");
 
+// authentification
 // test de la route qui permet à un utilisateur de s'enrégistrer
 describe("POST /api/user/register", () => {
   let req, res;
@@ -282,3 +286,63 @@ describe("Test de la route /api/user/follow/:id : PATCH", () => {
 });
 
 // upload d'image (photo de profil)
+describe("Test de la route /api/user/upload : POST", () => {
+  let req, res;
+
+  beforeEach(() => {
+    req = {
+      file: {
+        mimetype: "image/jpg" || "image/png" || "image/jpeg",
+        size: "450000",
+        buffer: Buffer.from("fake image"),
+      },
+      body: {
+        name: "test",
+        user_id: "1",
+      },
+    };
+    res = {
+      status: jest.fn().mockReturnThis(),
+      json: jest.fn(),
+      send: jest.fn(),
+    };
+    jest.clearAllMocks();
+  });
+  // teste le type de l'image
+  test("Devrait retourner l'erreur 'Format incompatible'", async () => {
+    req.file.mimetype = "trtrtrt";
+
+    await uploadProfil(req, res);
+
+    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.json).toHaveBeenCalledWith({
+      format: "Format incompatible",
+      maxSize: "",
+    });
+  });
+
+  // teste la taille de l'image
+  test("Devrait retourner l'erreur 'Le fichier dépasse 500ko'", async () => {
+    req.file.size = 600000;
+
+    await uploadProfil(req, res);
+
+    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.json).toHaveBeenCalledWith({
+      format: "",
+      maxSize: "Le fichier dépasse 500ko",
+    });
+  });
+
+  // teste la bonne exécution de l'upload
+  test("Devrait retourner le message suivant 'upload succes'", async () => {
+    jest.spyOn(fs.promises, "writeFile").mockResolvedValue(undefined); // Comprendre prochainement ce que fait jest.spyOn
+    // J'ai bien compris que cette methode permet de ne pas écraser tout le module "fs" mal structuré
+
+    await uploadProfil(req, res);
+
+    expect(fs.promises.writeFile).toHaveBeenCalled();
+    expect(res.status).toHaveBeenCalledWith(200);
+    expect(res.json).toHaveBeenCalledWith({ message: "upload succes" });
+  });
+});

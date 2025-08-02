@@ -11,11 +11,11 @@ module.exports.uploadProfil = async (req, res) => {
     }
 
     if (req.file.size > 500000) {
-      throw Error("Max size");
+      throw new Error("Max size");
     }
   } catch (err) {
     const errors = uploadErrors(err);
-    return res.status(400).json({ errors });
+    return res.status(400).json(errors);
   }
 
   //   on recupère l'image passé dans le body et on l'enregistre dans le dossier profil
