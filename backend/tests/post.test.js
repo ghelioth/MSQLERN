@@ -362,7 +362,7 @@ describe("Test de la route /api/post/: POST", () => {
   });
 
   // teste la bonne exécution de l'upload
-  test("Devrait retourner le message suivant 'upload succes'", async () => {
+  test("Devrait retourner un status 201 et le message 'Post created successfully'", async () => {
     jest.spyOn(fs.promises, "writeFile").mockResolvedValue(undefined);
 
     await createPost(req, res);
