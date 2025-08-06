@@ -336,9 +336,8 @@ describe("Test de la route /api/user/upload : POST", () => {
 
   // teste la bonne exécution de l'upload
   test("Devrait retourner le message suivant 'upload succes'", async () => {
-    jest.spyOn(fs.promises, "writeFile").mockResolvedValue(undefined); // Comprendre prochainement ce que fait jest.spyOn
-    // J'ai bien compris que cette methode permet de ne pas écraser tout le module "fs" mal structuré
-    // j'aurai aussi appris que 'bcrypt' à besoin des dépendances native de fs
+    jest.spyOn(fs.promises, "writeFile").mockResolvedValue(undefined); // jest.spyOn(fs.promises, "writeFile") sert à ne surcharger que la methode writeFile de fs. jest.mock("fs") quand à lui, surcharge tout le mondule, ce qui perturbe le bon fonctionnement de bcrypt
+    // j'aurai aussi appris que 'bcrypt' à besoin de certains dépendances native de fs
 
     await uploadProfil(req, res);
 

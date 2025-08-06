@@ -19,7 +19,7 @@ module.exports.createPost = async (req, res) => {
       }
     } catch (err) {
       const errors = uploadErrors(err);
-      return res.status(400).json({ errors });
+      return res.status(400).json(errors);
     }
 
     //   on recupère l'image passé dans le body et on l'enregistre dans le dossier profil
@@ -40,7 +40,7 @@ module.exports.createPost = async (req, res) => {
       message: "Post created successfully",
       post: post,
       user_id: req.body.id,
-      postId: post.insertId,
+      // postId: post.insertId,
     });
   } catch (err) {
     console.error(err);
@@ -65,7 +65,7 @@ module.exports.readPost = async (req, res) => {
 // controller permettant de lire un post par son ID
 module.exports.getPostById = async (req, res) => {
   try {
-    const [post] = await postModel.getPostById(req.params.id);
+    const post = await postModel.getPostById(req.params.id);
     if (!post) {
       return res.status(404).json({ message: "Post not found" });
     }
@@ -122,7 +122,7 @@ module.exports.likePost = async (req, res) => {
     const userId = req.body.user_id;
 
     // On récupère le post à liker
-    const [post] = await postModel.getPostById(postId);
+    const post = await postModel.getPostById(postId);
 
     if (!post) {
       return res.status(404).json({ message: "Post not found" });
@@ -141,7 +141,7 @@ module.exports.likePost = async (req, res) => {
     likers.push(userId);
 
     // on met également à jour la liste des postes que l'utilisateur a liké
-    const [user] = await userModel.getUserById(userId);
+    const user = await userModel.getUserById(userId);
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
@@ -157,9 +157,9 @@ module.exports.likePost = async (req, res) => {
 
     res.status(200).json({
       message: "Post liked successfully",
-      likers: likers,
+      // likers: likers,
       postId: postId,
-      likedPosts: likedPosts,
+      // likedPosts: likedPosts,
     });
   } catch (err) {
     console.error(err);
@@ -174,7 +174,7 @@ module.exports.unlikePost = async (req, res) => {
     const userId = req.body.user_id;
 
     // On récupère le post liké
-    const [post] = await postModel.getPostById(postId);
+    const post = await postModel.getPostById(postId);
 
     if (!post) {
       return res.status(404).json({ message: "Post not found" });
@@ -189,7 +189,7 @@ module.exports.unlikePost = async (req, res) => {
     }
 
     // on met également à jour la liste des postes que l'utilisateur a liké
-    const [user] = await userModel.getUserById(userId);
+    const user = await userModel.getUserById(userId);
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
@@ -203,7 +203,7 @@ module.exports.unlikePost = async (req, res) => {
 
     res.status(200).json({
       message: "Post unliked successfully",
-      likers: likers,
+      // likers: likers,
       postId: postId,
     });
   } catch (err) {
