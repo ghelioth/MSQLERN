@@ -1,4 +1,3 @@
-const request = require("supertest");
 const fs = require("fs");
 const db = require("../config/db");
 const postModel = require("../src/models/post.model");

@@ -12,12 +12,12 @@ module.exports.createComment = async (req, res) => {
     );
     res.status(201).json({
       message: "Comment created successfully",
-      comment: comment,
+      // comment: comment,
       userId: req.body.user_id,
       postId: req.body.post_id,
     });
   } catch (err) {
-    console.error(err);
+    // console.error(err);
     res.status(500).json({ message: err.message });
   }
 };
@@ -25,13 +25,16 @@ module.exports.createComment = async (req, res) => {
 // controller permettant de lire les commentaires
 module.exports.readComment = async (req, res) => {
   try {
-    const comments = await commentModel.readComment();
+    const [comments] = await commentModel.readComment();
+    if (!comments) {
+      return res.status(404).json({ message: "No comments" });
+    }
     res.status(200).json({
       message: "Comments retrieved successfully",
       comments: comments,
     });
   } catch (err) {
-    console.error(err);
+    // console.error(err);
     res.status(500).json({ message: err.message });
   }
 };
@@ -48,7 +51,7 @@ module.exports.getCommentById = async (req, res) => {
       comment: comment,
     });
   } catch (err) {
-    console.error(err);
+    // console.error(err);
     res.status(500).json({ message: err.message });
   }
 };
@@ -60,6 +63,9 @@ module.exports.updateComment = async (req, res) => {
       req.params.id,
       req.body.message
     );
+    if (comment.affectedRows === undefined) {
+      throw new Error("Something went wrong !");
+    }
     if (comment.affectedRows === 0) {
       return res.status(404).json({ message: "Comment not found" });
     }
@@ -68,7 +74,7 @@ module.exports.updateComment = async (req, res) => {
       postId: req.params.id,
     });
   } catch (err) {
-    console.error(err);
+    // console.error(err);
     res.status(500).json({ message: err.message });
   }
 };
@@ -77,6 +83,10 @@ module.exports.updateComment = async (req, res) => {
 module.exports.deleteComment = async (req, res) => {
   try {
     const result = await commentModel.deleteComment(req.params.id);
+
+    if (result.affectedRows === undefined) {
+      throw new Error("Something went wrong !");
+    }
     if (result.affectedRows === 0) {
       return res.status(404).json({ message: "Comment not found" });
     }
@@ -85,7 +95,7 @@ module.exports.deleteComment = async (req, res) => {
       postId: req.params.id,
     });
   } catch (err) {
-    console.error(err);
+    // console.error(err);
     res.status(500).json({ message: err.message });
   }
 };
@@ -99,7 +109,7 @@ module.exports.likeComment = async (req, res) => {
     const userId = req.body.user_id;
 
     // On récupère le post à liker
-    const [comment] = await commentModel.getCommentById(commentId);
+    const comment = await commentModel.getCommentById(commentId);
 
     if (!comment) {
       return res.status(404).json({ message: "Comment not found" });
@@ -118,7 +128,7 @@ module.exports.likeComment = async (req, res) => {
     likers.push(userId);
 
     // on met également à jour la liste des postes que l'utilisateur a liké
-    const [user] = await userModel.getUserById(userId);
+    const user = await userModel.getUserById(userId);
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
@@ -134,9 +144,7 @@ module.exports.likeComment = async (req, res) => {
 
     res.status(200).json({
       message: "Comment liked successfully",
-      likers: likers,
       commentId: commentId,
-      likedComments: likedComments,
     });
   } catch (err) {
     console.error(err);
@@ -151,7 +159,7 @@ module.exports.unlikeComment = async (req, res) => {
     const userId = req.body.user_id;
 
     // On récupère le post liké
-    const [comment] = await commentModel.getCommentById(commentId);
+    const comment = await commentModel.getCommentById(commentId);
 
     if (!comment) {
       return res.status(404).json({ message: "Comment not found" });
@@ -166,7 +174,7 @@ module.exports.unlikeComment = async (req, res) => {
     }
 
     // on met également à jour la liste des postes que l'utilisateur a liké
-    const [user] = await userModel.getUserById(userId);
+    const user = await userModel.getUserById(userId);
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
@@ -180,7 +188,6 @@ module.exports.unlikeComment = async (req, res) => {
 
     res.status(200).json({
       message: "Comment unliked successfully",
-      likers: likers,
       commentId: commentId,
     });
   } catch (err) {
