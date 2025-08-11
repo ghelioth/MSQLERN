@@ -10,6 +10,18 @@ module.exports.signUpErrors = (err) => {
   return errors;
 };
 
+module.exports.signInErrors = (err) => {
+  let errors = { password: "", email: "" };
+
+  const msg = err?.message || "";
+
+  if (msg.includes("password")) errors.password = "Mot de passe incorrecte";
+
+  if (msg.includes("email")) errors.email = "Email inconnu";
+
+  return errors;
+};
+
 module.exports.uploadErrors = (err) => {
   let errors = { format: "", maxSize: "" };
 

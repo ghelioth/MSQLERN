@@ -2,7 +2,7 @@ const userModel = require("../models/user.model");
 const bcrypt = require("bcrypt");
 const { crypt, trim, isEmail } = require("../utilities/user.utility");
 const { createToken } = require("../utilities/auth.utility");
-const { signUpErrors } = require("../utilities/error.utility");
+const { signUpErrors, signInErrors } = require("../utilities/error.utility");
 
 module.exports.signUp = async (req, res) => {
   if (!req.body) {
@@ -52,13 +52,13 @@ module.exports.signIn = async (req, res) => {
     const [user] = await userModel.login(email);
 
     if (!user) {
-      return res.status(200).json({ error: "Email inconnu" });
+      throw new Error("email inconnu");
     }
 
     // on vérifie le mot de passe
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
-      return res.status(200).json({ error: "Mot de passe incorrect" });
+      throw new Error("incorrect password");
     }
 
     // création du token
@@ -71,7 +71,8 @@ module.exports.signIn = async (req, res) => {
     });
     return res.status(200).json({ user: user.id });
   } catch (err) {
-    return res.status(200).json(err);
+    const errors = signInErrors(err);
+    return res.status(400).json(errors);
   }
 };
 
