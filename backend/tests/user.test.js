@@ -151,8 +151,11 @@ describe("POST /api/user/login", () => {
     userModel.login.mockResolvedValue([null]);
     await signIn(req, res);
 
-    expect(res.status).toHaveBeenCalledWith(200);
-    expect(res.json).toHaveBeenCalledWith({ error: "Email inconnu" });
+    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.json).toHaveBeenCalledWith({
+      email: "Email inconnu",
+      password: "",
+    });
   });
 
   test("Devrait retourner une erreur si le mot de passe est invalide", async () => {
@@ -161,7 +164,10 @@ describe("POST /api/user/login", () => {
 
     await signIn(req, res);
 
-    expect(res.json).toHaveBeenCalledWith({ error: "Mot de passe incorrect" });
+    expect(res.json).toHaveBeenCalledWith({
+      password: "Mot de passe incorrect",
+      email: "",
+    });
   });
 
   test("Devrait retourner un cookie si tout est correct", async () => {

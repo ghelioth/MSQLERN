@@ -15,7 +15,7 @@ module.exports.signInErrors = (err) => {
 
   const msg = err?.message || "";
 
-  if (msg.includes("password")) errors.password = "Mot de passe incorrecte";
+  if (msg.includes("password")) errors.password = "Mot de passe incorrect";
 
   if (msg.includes("email")) errors.email = "Email inconnu";
 
