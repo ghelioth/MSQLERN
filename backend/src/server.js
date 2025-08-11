@@ -14,13 +14,13 @@ const app = express();
 // cors
 const corsOptions = {
   origin: process.env.CLIENT_URL,
-  Credential: true,
+  credentials: true,
   allowedHeaders: ["sessionId", "Content-Type"],
   exposedHeaders: ["sessionId"],
   methods: "GET, HEAD, PUT, PATCH, POST, DELETE",
   preflightContinue: false,
 };
-app.use(cors({ corsOptions }));
+app.use(cors(corsOptions));
 // app.use(express.json);
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
