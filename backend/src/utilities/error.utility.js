@@ -1,11 +1,17 @@
 module.exports.signUpErrors = (err) => {
-  let errors = { pseudo: "", email: "" };
+  let errors = { pseudo: "", email: "", password: "" };
 
   const msg = err?.message || "";
 
-  if (msg.includes("pseudo")) errors.pseudo = "Pseudo incorrect ou déjà pris";
+  if (msg.includes("pseudo"))
+    errors.pseudo =
+      "Pseudo incorrect ou déjà pris, doit faire 5 caractères minimum";
 
-  if (msg.includes("email")) errors.email = "Email déjà enrégistré";
+  if (msg.includes("email"))
+    errors.email = "Email incorrect ou déjà enrégistré";
+
+  if (msg.includes("password"))
+    errors.password = "Le mot de passe doit faire 6 caractères munimum";
 
   return errors;
 };

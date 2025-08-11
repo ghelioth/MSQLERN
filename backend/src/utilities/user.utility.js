@@ -30,7 +30,7 @@ module.exports.isEmail = async (email) => {
 
 module.exports.crypt = async (password) => {
   if (password.length <= 5) {
-    return { error: "mot de passe trop court, minimum 6 caractères" };
+    return { error: "password incorrect, minimum 6 caractères" };
   } else {
     const salt = await bcrypt.genSalt();
     const hashPassword = await bcrypt.hash(password, salt);

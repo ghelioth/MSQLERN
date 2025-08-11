@@ -12,7 +12,7 @@ const SignInForm = () => {
 
         axios({
             method: "post",
-            url: import.meta.env.VITE_API_URL + 'api/user/login',
+            url: `${import.meta.env.VITE_API_URL}api/user/login`,
             withCredentials: true,
             data: {
                 email,
@@ -22,7 +22,7 @@ const SignInForm = () => {
         .then((res) => {
             if(res.data.errors) {
                 emailError.innerHTML = res.data.errors.email;
-                passwordError.innerHTML = res.data.error.password;
+                passwordError.innerHTML = res.data.errors.password;
             } else {
                 console.log(res)
                 window.location = '/';
@@ -35,21 +35,21 @@ const SignInForm = () => {
 
 
     return (
-<form action="" onSubmit={handleLogin} id="sign-up-form">
-    <label htmlFor="email">Email</label>
-    <br />
-    <input type="text" name='email' id='email' onChange={(e) => setEmail(e.target.value)} value={email} />
-    <br />
-    <div className="email error"></div>
-    <br />
-    <label htmlFor="password">Mot de passe</label>
-    <br />
-    <input type="password" name='password' id='password' onChange={(e) => setPassword(e.target.value)} value={password} />
-    <br />
-    <div className="password error"></div>
-    <br />
-    <input type="submit" value="Se connecter"/>
-</form>
+        <form action="" onSubmit={handleLogin} id="sign-up-form">
+            <label htmlFor="email">Email</label>
+            <br />
+            <input type="text" name='email' id='email' onChange={(e) => setEmail(e.target.value)} value={email} />
+            <br />
+            <div className="email error"></div>
+            <br />
+            <label htmlFor="password">Mot de passe</label>
+            <br />
+            <input type="password" name='password' id='password' onChange={(e) => setPassword(e.target.value)} value={password} />
+            <br />
+            <div className="password error"></div>
+            <br />
+            <input type="submit" value="Se connecter"/>
+        </form>
     );
 };
 

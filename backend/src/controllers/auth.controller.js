@@ -6,7 +6,7 @@ const { signUpErrors, signInErrors } = require("../utilities/error.utility");
 
 module.exports.signUp = async (req, res) => {
   if (!req.body) {
-    return res.status(400).json({ message: "Champs requis" });
+    return res.status(200).json({ message: "Champs requis" });
   }
 
   try {
@@ -15,18 +15,15 @@ module.exports.signUp = async (req, res) => {
     const trimPseudo = await trim(pseudo);
     // if (!trimPseudo)
     //   return res.status(400).json({ message: "Pseudo invalide" });
-    if (trimPseudo.error)
-      return res.status(400).json({ message: trimPseudo.error });
+    if (trimPseudo.error) throw new Error(trimPseudo.error);
 
     // on verifie le format de l'email avec isEmail()
     const valideEmail = await isEmail(email);
-    if (valideEmail.error)
-      return res.status(400).json({ message: valideEmail.error });
+    if (valideEmail.error) throw new Error(valideEmail.error);
 
     // on hash le mot de passe afin de le sécuriser avant de le stocker dans la bd
     const hashPassword = await crypt(password);
-    if (hashPassword.error)
-      return res.status(400).json({ message: hashPassword.error });
+    if (hashPassword.error) throw new Error(hashPassword.error);
 
     const user = await userModel.createUser(
       trimPseudo,
@@ -38,10 +35,10 @@ module.exports.signUp = async (req, res) => {
       throw new Error(user.error);
     }
 
-    res.status(200).json({ user_id: user.insertId, message: "créé" });
+    res.status(201).json({ user_id: user.insertId, message: "créé" });
   } catch (err) {
     const errors = signUpErrors(err);
-    return res.status(400).json(errors);
+    return res.status(200).json({ errors: errors });
   }
 };
 
@@ -72,7 +69,7 @@ module.exports.signIn = async (req, res) => {
     return res.status(200).json({ user: user.id });
   } catch (err) {
     const errors = signInErrors(err);
-    return res.status(400).json(errors);
+    return res.status(200).json({ errors: errors });
   }
 };
 
