@@ -27,7 +27,7 @@ const SignUpForm = () => {
 
         if (password !== verif || !terms.checked) {
             if (password !== verif)
-                verifError.innerHTML = "Les mots de passent ne correspondent pas";
+                verifError.innerHTML = "Les mots de passe ne correspondent pas";
             if (!terms.checked)
                 termsError.innerHTML = "Veillez valider les conditions générales";
         } else {
@@ -84,6 +84,7 @@ const SignUpForm = () => {
             <div className="password error"></div>
             <br />
             <label htmlFor="verif">Confirmer le mot de passe</label>
+            <br />
             <input type="password"  name='password' id='verif' onChange={(e) => setVerif(e.target.value)} value={verif}/>
             <br />
             <div className="verif error"></div>

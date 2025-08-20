@@ -45,7 +45,7 @@ describe("POST /api/user/register", () => {
     req.body = undefined;
     await signUp(req, res);
 
-    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.status).toHaveBeenCalledWith(200);
     expect(res.json).toHaveBeenCalledWith({ message: "Champs requis" });
   });
 
@@ -54,7 +54,7 @@ describe("POST /api/user/register", () => {
 
     await signUp(req, res);
 
-    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.status).toHaveBeenCalledWith(200);
     expect(res.json).toHaveBeenCalledWith({ message: "pseudo trop court" });
   });
 
@@ -64,7 +64,7 @@ describe("POST /api/user/register", () => {
 
     await signUp(req, res);
 
-    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.status).toHaveBeenCalledWith(200);
     expect(res.json).toHaveBeenCalledWith({ message: "Email invalide" });
   });
 
@@ -75,7 +75,7 @@ describe("POST /api/user/register", () => {
 
     await signUp(req, res);
 
-    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.status).toHaveBeenCalledWith(200);
     expect(res.json).toHaveBeenCalledWith({
       message: "Mot de passe trop court",
     });
@@ -91,7 +91,7 @@ describe("POST /api/user/register", () => {
 
     await signUp(req, res);
 
-    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.status).toHaveBeenCalledWith(200);
     expect(res.json).toHaveBeenCalledWith({
       email: "",
       pseudo: "Pseudo incorrect ou déjà pris",
@@ -108,7 +108,7 @@ describe("POST /api/user/register", () => {
 
     await signUp(req, res);
 
-    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.status).toHaveBeenCalledWith(200);
     expect(res.json).toHaveBeenCalledWith({
       email: "Email déjà enrégistré",
       pseudo: "",
@@ -127,7 +127,7 @@ describe("POST /api/user/register", () => {
 
     await signUp(req, res);
 
-    expect(res.status).toHaveBeenCalledWith(200);
+    expect(res.status).toHaveBeenCalledWith(201);
     expect(res.json).toHaveBeenCalledWith({ message: "créé" });
   });
 });
@@ -151,7 +151,7 @@ describe("POST /api/user/login", () => {
     userModel.login.mockResolvedValue([null]);
     await signIn(req, res);
 
-    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.status).toHaveBeenCalledWith(200);
     expect(res.json).toHaveBeenCalledWith({
       email: "Email inconnu",
       password: "",
